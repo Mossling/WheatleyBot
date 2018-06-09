@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 import asyncio
-import chalk
+#import chalk
 
 prefix = "!"
 bot = commands.Bot(command_prefix=prefix)
@@ -15,12 +15,13 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     print("The message's content was: " + message.content)
+    await bot.process_commands(message)
 
     
 @bot.command(pass_context=True)
 async def ping(ctx):
     await bot.say("ponggggg!")
-    await bot.say(str(ctx.message.channel))
+    #await bot.say(str(ctx.message.channel))
 
 
 
@@ -29,9 +30,11 @@ async def echo(ctx, *, content:str):
     await bot.say()
 
 
-@bot.command()
-async def channelnamevote(ctx.message)
-    await 
+@bot.command(pass_context=True)
+async def channelnamevote(ctx, arg):
+    mes = await bot.say('Voting for new server name: "' +arg +'"')
+    await bot.add_reaction(mes, "👍")
+    await bot.add_reaction(mes, "👎")
 
 
 
