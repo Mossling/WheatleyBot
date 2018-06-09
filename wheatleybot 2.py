@@ -16,22 +16,17 @@ async def on_ready():
 async def on_message(message):
     print("The message's content was: " + message.content)
 
-@bot.command()
+    
+@bot.command(pass_context=True)
 async def ping(ctx):
-    '''
-    This text will be shown in the help command
-    '''
-
-    # Get the latency of the bot
-    latency = bot.latency  # Included in the Discord.py library
-    # Send it to the user
-    await ctx.send(latency)
+    await bot.say("ponggggg!")
+    await bot.say(str(ctx.message.channel))
 
 
 
 @bot.command()
 async def echo(ctx, *, content:str):
-    await ctx.send(content)
+    await bot.say()
 
 
 @bot.command()
