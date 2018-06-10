@@ -25,9 +25,9 @@ async def ping(ctx):
 
 
 
-@bot.command()
-async def echo(ctx, *, content:str):
-    await bot.say()
+@bot.command(pass_context=True)
+async def echo(ctx, *, arg):
+    await bot.say(arg)
 
 
 @bot.command(pass_context=True)
