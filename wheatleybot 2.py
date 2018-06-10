@@ -27,9 +27,9 @@ async def on_message(message):
 async def ping(ctx):
     await bot.say("ponggggg!")
 
-@bot.command()
-async def echo(ctx, *, content:str):
-    await bot.say()
+@bot.command(pass_context=True)
+async def echo(ctx, *, arg):
+    await bot.say(arg)
 
 @bot.command(pass_context=True)
 async def servernamevote(ctx, arg):
