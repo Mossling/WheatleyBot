@@ -24,8 +24,6 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def ping(ctx):
     await bot.say("ponggggg!")
-    await bot.say(str(ctx.message.channel))
-
 
 @bot.command(pass_context=True)
 async def echo(ctx, *, arg):
