@@ -59,7 +59,7 @@ async def servernamevote(ctx, arg):
         temp_mes = await bot.say('Voting for new server name: "' +arg+ '"')
         
         if await run_reaction_vote(temp_mes, vote_delay):
-            await bot.say('changing name to: "' +arg+ '"')
+            await bot.say('Changing server name to: "' +arg+ '"')
             await bot.edit_server(server, name=arg)
         else:
             await bot.say("Vote failed")
@@ -76,7 +76,7 @@ async def channelnamevote(ctx, arg1, arg2):
     
     if(arg2 != target_channel.name):
         
-        temp_mes = await bot.say('Voting for new channel '+arg1+' name: "' +arg2+ '"')
+        temp_mes = await bot.say('Voting to change channel '+arg1+'\'s name to: "' +arg2+ '"')
         
         if await run_reaction_vote(temp_mes, vote_delay):
             await bot.say('Changing name of '+arg1+' channel to: "' +arg2+ '"')
