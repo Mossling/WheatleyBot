@@ -31,6 +31,26 @@ async def ping(ctx):
 async def echo(ctx, *, arg):
     await bot.say(arg)
 
+async def run_reaction_vote(temp_mes, delay):
+    # Add reactions for voting and wait
+    await bot.add_reaction(temp_mes, "👍")
+    await bot.add_reaction(temp_mes, "👎")
+    await asyncio.sleep(delay)
+    #await bot.say("waited " +str(vote_delay)+ " seconds") # temp message
+        
+    mes = discord.utils.get(bot.messages,id=temp_mes.id) # get long term message from cache
+        
+    # tally votes
+    thumbs_ups = 0
+    thumbs_downs = 0
+    for react in mes.reactions:
+        if react.emoji == "👍":
+            thumbs_ups = react.count
+        elif react.emoji == "👎":
+            thumbs_downs = react.count
+        #else: TODO remove any other emoji
+    return thumbs_ups > thumbs_downs # returns true if success
+
 @bot.command(pass_context=True)
 async def servernamevote(ctx, arg):
     server = ctx.message.author.server # get target server for name change
@@ -39,24 +59,7 @@ async def servernamevote(ctx, arg):
         
         temp_mes = await bot.say('Voting for new server name: "' +arg+ '"')
         
-        # Add reactions for voting and wait
-        await bot.add_reaction(temp_mes, "👍")
-        await bot.add_reaction(temp_mes, "👎")
-        await asyncio.sleep(vote_delay)
-        #await bot.say("waited " +str(vote_delay)+ " seconds") # temp message
-        
-        mes = discord.utils.get(bot.messages,id=temp_mes.id) # get long term message from cache
-        
-        # tally votes
-        thumbs_ups = 0
-        thumbs_downs = 0
-        for react in mes.reactions:
-            if react.emoji == "👍":
-                thumbs_ups = react.count
-            elif react.emoji == "👎":
-                thumbs_downs = react.count
-            #else: remove any other emoji
-        if thumbs_ups > thumbs_downs:
+        if await run_reaction_vote(temp_mes, vote_delay):
             await bot.say('changing name to: "' +arg+ '"')
             await bot.edit_server(server, name=arg)
         else:
