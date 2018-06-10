@@ -49,42 +49,58 @@ async def run_reaction_vote(temp_mes, delay):
             thumbs_downs = react.count
         #else: TODO remove any other emoji
     return thumbs_ups > thumbs_downs # returns true if success
+        
+@bot.group(pass_context=True)
+async def change(ctx):
+    if ctx.invoked_subcommand is None:
+        await bot.say("Improper use")
 
-@bot.command(pass_context=True)
-async def servernamevote(ctx, arg):
+@change.group(pass_context=True)
+async def server(ctx):
+    if ctx.invoked_subcommand is None:
+        await bot.say("Improper use")
+
+@server.command(pass_context=True)
+async def name(ctx, new_name):
     server = ctx.message.author.server # get target server for name change
     
-    if(arg != server.name):
+    if(new_name != server.name):
         
-        temp_mes = await bot.say('Voting for new server name: "' +arg+ '"')
+        temp_mes = await bot.say('Voting for new server name: "' +new_name+ '"')
         
         if await run_reaction_vote(temp_mes, vote_delay):
-            await bot.say('Changing server name to: "' +arg+ '"')
-            await bot.edit_server(server, name=arg)
+            await bot.say('Changing server name to: "' +new_name+ '"')
+            await bot.edit_server(server, name=new_name)
         else:
             await bot.say("Vote failed")
     else:
-        await bot.say("Same as current name")
+        await bot.say("Current name and new name are the same")
 
+@change.group(pass_context=True)
+async def channel(ctx):
+    if ctx.invoked_subcommand is None:
+        await bot.say("Improper user")
 
-
-@bot.command(pass_context=True)
-async def channelnamevote(ctx, arg1, arg2):
+@channel.command(pass_context=True)
+async def name(ctx, target_channel_name, new_name):
     for channel in (ctx.message.author.server.channels):
-        if channel.name == arg1:
-          target_channel = channel
+        if channel.name == target_channel_name:
+            target_channel = channel
+            #TODO resolve two channels of the same name
+    #TODO allow targeting by ID
     
-    if(arg2 != target_channel.name):
+    #TODO tell the user that capatalized letters are not used
+    
+    if(new_name != target_channel.name):
         
-        temp_mes = await bot.say('Voting to change channel '+arg1+'\'s name to: "' +arg2+ '"')
+        temp_mes = await bot.say('Voting to change channel '+target_channel.name+'\'s name to: "' +new_name+ '"')
         
         if await run_reaction_vote(temp_mes, vote_delay):
-            await bot.say('Changing name of '+arg1+' channel to: "' +arg2+ '"')
-            await bot.edit_channel(target_channel, name=arg2)
+            await bot.say('Changing name of channel '+target_channel.name+' to: "' +new_name+ '"')
+            await bot.edit_channel(target_channel, name=new_name)
         else:
             await bot.say("Vote failed")
     else:
-        await bot.say("Same as current name")
-
-
+        await bot.say("Current name and new name are the same")
+    
 bot.run(token)
