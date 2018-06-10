@@ -3,9 +3,14 @@
 import discord
 from discord.ext import commands
 import asyncio
-#import chalk
+import chalk
 
+#config
+token = "NDQ5NzA5NzEzOTE2MTY2MTQ0.Depjsg.PqAQCSS0ngFNKQvkCsWA3KiAKiE"
 prefix = "!"
+vote_delay = 5
+
+
 bot = commands.Bot(command_prefix=prefix)
 
 @bot.event
@@ -21,21 +26,44 @@ async def on_message(message):
 @bot.command(pass_context=True)
 async def ping(ctx):
     await bot.say("ponggggg!")
-    #await bot.say(str(ctx.message.channel))
-
-
 
 @bot.command()
 async def echo(ctx, *, content:str):
     await bot.say()
 
-
 @bot.command(pass_context=True)
-async def channelnamevote(ctx, arg):
-    mes = await bot.say('Voting for new server name: "' +arg +'"')
-    await bot.add_reaction(mes, "👍")
-    await bot.add_reaction(mes, "👎")
+async def servernamevote(ctx, arg):
+    server = ctx.message.author.server # get target server for name change
+    
+    if(arg != server.name):
+        
+        temp_mes = await bot.say('Voting for new server name: "' +arg+ '"')
+        
+        # Add reactions for voting and wait
+        await bot.add_reaction(temp_mes, "👍")
+        await bot.add_reaction(temp_mes, "👎")
+        await asyncio.sleep(vote_delay)
+        #await bot.say("waited " +str(vote_delay)+ " seconds") # temp message
+        
+        mes = discord.utils.get(bot.messages,id=temp_mes.id) # get long term message from cache
+        
+        # tally votes
+        thumbs_ups = 0
+        thumbs_downs = 0
+        for react in mes.reactions:
+            if react.emoji == "👍":
+                thumbs_ups = react.count
+            elif react.emoji == "👎":
+                thumbs_downs = react.count
+            #else: remove any other emoji
+        if thumbs_ups > thumbs_downs:
+            await bot.say('changing name to: "' +arg+ '"')
+            await bot.edit_server(server, name=arg)
+        else:
+            await bot.say("Vote failed")
+    else:
+        await bot.say("Same as current name")
 
 
 
-bot.run("NDQ5NzA5NzEzOTE2MTY2MTQ0.Depjsg.PqAQCSS0ngFNKQvkCsWA3KiAKiE")
+bot.run(token)
