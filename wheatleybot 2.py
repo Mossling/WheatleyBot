@@ -78,10 +78,10 @@ async def channelnamevote(ctx, arg1, arg2):
     
     if(arg2 != target_channel.name):
         
-        temp_mes = await bot.say('Voting for new channel name: "' +arg2+ '"')
+        temp_mes = await bot.say('Voting for new channel '+arg1+' name: "' +arg2+ '"')
         
         if await run_reaction_vote(temp_mes, vote_delay):
-            await bot.say('changing name to: "' +arg2+ '"')
+            await bot.say('Changing name of '+arg1+' channel to: "' +arg2+ '"')
             await bot.edit_channel(target_channel, name=arg2)
         else:
             await bot.say("Vote failed")
