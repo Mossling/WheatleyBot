@@ -9,8 +9,21 @@ import chalk
 #config
 token = "NDQ5NzA5NzEzOTE2MTY2MTQ0.Depjsg.PqAQCSS0ngFNKQvkCsWA3KiAKiE"
 prefix = "!"
-vote_delay = 5
+vote_delay = 10
 bot = commands.Bot(command_prefix=prefix)
+
+#Command for setting the vote delay
+@bot.command(pass_context=True)
+async def votetimer(ctx, arg1):
+    global vote_delay
+    if ((arg1) <= "600") and ((arg1) >= "10"):
+        await bot.say('Changing voting timer to: ' +arg1+' seconds.')
+        vote_delay = (int(arg1))
+    
+#print vote_delay to console
+@bot.command(pass_context=True)
+async def printvotedelay(ctx):
+    print(vote_delay)
 
 @bot.event
 async def on_ready():
