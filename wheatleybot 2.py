@@ -12,6 +12,23 @@ prefix = "!"
 vote_delay = 10
 bot = commands.Bot(command_prefix=prefix)
 
+#Command to show config settings
+@bot.command(pass_context=True)
+async def config(ctx):
+    await bot.say('Command prefix is '+prefix+'.')
+    await bot.say('Voting timer is '+str(vote_delay)+' seconds.')
+
+#Command which lists other commands
+@bot.command(pass_context=True)
+async def helplist(ctx):
+    await bot.say('config')
+    await bot.say('votetimer (new timer value)')
+    await bot.say('change server name (new name)')
+    await bot.say('change channel name (new name)')
+    await bot.say('printvotedelay')
+    await bot.say('ping')
+    await bot.say('echo (text to echo back)')
+
 #Command for setting the vote delay
 @bot.command(pass_context=True)
 async def votetimer(ctx, arg1):
