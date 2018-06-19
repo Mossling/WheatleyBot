@@ -19,29 +19,11 @@ bot = commands.Bot(command_prefix=prefix)
 
 #Command to show config settings
 @bot.command(pass_context=True)
-async def config(ctx):
+async def settings(ctx):
     await bot.say('Command prefix is '+prefix+'.')
     await bot.say('Voting timer is '+str(vote_delay)+' seconds.')
 
-#Command which lists other commands
-@bot.command(pass_context=True)
-async def helplist(ctx):
-    await bot.say('config')
-    await bot.say('votetimer (new timer value)')
-    await bot.say('change server name (new name)')
-    await bot.say('change channel name (new name)')
-    await bot.say('printvotedelay')
-    await bot.say('ping')
-    await bot.say('echo (text to echo back)')
 
-#Command for setting the vote delay
-@bot.command(pass_context=True)
-async def votetimer(ctx, arg1):
-    global vote_delay
-    if ((arg1) <= "600") and ((arg1) >= "10"):
-        await bot.say('Changing voting timer to: ' +arg1+' seconds.')
-        vote_delay = (int(arg1))
-    
 #print vote_delay to console
 @bot.command(pass_context=True)
 async def printvotedelay(ctx):
@@ -114,7 +96,7 @@ async def name(ctx, new_name):
 @set.group(pass_context=True)
 async def channel(ctx):
     if ctx.invoked_subcommand is None:
-        await bot.say("Improper user")
+        await bot.say("Improper use")
 
 @channel.command(pass_context=True)
 async def name(ctx, target_channel_name, new_name):
@@ -137,5 +119,18 @@ async def name(ctx, target_channel_name, new_name):
             await bot.say("Vote failed")
     else:
         await bot.say("Current name and new name are the same")
+
+@change.group(pass_context=True)
+async def config(ctx):
+    if ctx.invoked_subcommand is None:
+        await bot.say("Improper use")
+
+#Command for setting the vote delay
+@config.command(pass_context=True)
+async def vote_delay(ctx, arg1):
+    global vote_delay
+    if ((arg1) <= "600") and ((arg1) >= "10"):
+        await bot.say('Changing vote delay to: ' +arg1+' seconds.')
+        vote_delay = (int(arg1))
     
 bot.run(token)
