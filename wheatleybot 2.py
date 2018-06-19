@@ -6,10 +6,15 @@ from discord.ext import commands
 import asyncio
 import chalk
 
-#config
+#host config - None changable
 token = "NDQ5NzA5NzEzOTE2MTY2MTQ0.Depjsg.PqAQCSS0ngFNKQvkCsWA3KiAKiE"
+max_vote_delay = 5
+min_vote_delay = 5*60
+
+#config - changeable by vote
 prefix = "!"
 vote_delay = 10
+
 bot = commands.Bot(command_prefix=prefix)
 
 #Command to show config settings
@@ -81,11 +86,11 @@ async def run_reaction_vote(temp_mes, delay):
     return thumbs_ups > thumbs_downs # returns true if success
         
 @bot.group(pass_context=True)
-async def change(ctx):
+async def set(ctx):
     if ctx.invoked_subcommand is None:
         await bot.say("Improper use")
 
-@change.group(pass_context=True)
+@set.group(pass_context=True)
 async def server(ctx):
     if ctx.invoked_subcommand is None:
         await bot.say("Improper use")
@@ -106,7 +111,7 @@ async def name(ctx, new_name):
     else:
         await bot.say("Current name and new name are the same")
 
-@change.group(pass_context=True)
+@set.group(pass_context=True)
 async def channel(ctx):
     if ctx.invoked_subcommand is None:
         await bot.say("Improper user")
