@@ -14,18 +14,20 @@ max_vote_delay = 300 # 5*60 5 minutes
 min_vote_delay = 5 # 5 seconds
 
 #config - changeable by vote
-prefix = "!"
 vote_delay = 10
 
-config_manager.save_config()
+config_manager.load_config()
 
-bot = commands.Bot(command_prefix=prefix)
+p = config_manager.get_config_variable("prefix")
+bot = commands.Bot(command_prefix=p)
 
 #Command to show config settings
 @bot.command(pass_context=True, name="settings")
 async def cmd_settings(ctx):
-    await bot.say('Command prefix is '+prefix+'.')
-    await bot.say('Voting timer is '+str(vote_delay)+' seconds.')
+    p = config_manager.get_config_variable("prefix")
+    vd = config_manager.get_config_variable("vote_delay")
+    await bot.say('Command prefix is ' +p+ '.')
+    await bot.say('Voting timer is ' +str(vd)+ ' seconds.')
 
 @bot.event
 async def on_ready():
@@ -41,8 +43,8 @@ async def cmd_ping(ctx):
     await bot.say("ponggggg!")
 
 @bot.command(pass_context=True, name="echo")
-async def cmd_echo(ctx, *, arg):
-    await bot.say(arg)
+async def cmd_echo(ctx, *, text):
+    await bot.say(text)
 
 
 async def run_reaction_vote(temp_mes, delay):
@@ -84,7 +86,9 @@ async def cmd_name(ctx, new_name):
 
         temp_mes = await bot.say('Voting for new server name: "' +new_name+ '"')
 
-        if await run_reaction_vote(temp_mes, vote_delay):
+        vd = config_manager.get_config_variable("vote_delay")
+
+        if await run_reaction_vote(temp_mes, vd):
             await bot.say('Changing server name to: "' +new_name+ '"')
             await bot.edit_server(server, name=new_name)
         else:
@@ -111,7 +115,9 @@ async def cmd_name(ctx, target_channel_name, new_name):
         
         temp_mes = await bot.say('Voting to change channel '+target_channel.name+'\'s name to: "' +new_name+ '"')
         
-        if await run_reaction_vote(temp_mes, vote_delay):
+        vd = config_manager.get_config_variable("vote_delay")
+
+        if await run_reaction_vote(temp_mes, vd):
             await bot.say('Changing name of channel '+target_channel.name+' to: "' +new_name+ '"')
             await bot.edit_channel(target_channel, name=new_name)
         else:
@@ -126,17 +132,23 @@ async def grp_config(ctx):
 
 #Command for setting the vote delay
 @grp_config.command(pass_context=True, name="vote_delay")
-async def cmd_vote_delay(ctx, arg1):
-    global vote_delay
-    if (vote_delay) != (int(arg1)):
-      if ((int(arg1)) <= (max_vote_delay) and (int(arg1)) >= (min_vote_delay)):
-        temp_mes = await bot.say('Voting to change vote delay to: ' +arg1+ ' seconds.')
-        if await run_reaction_vote(temp_mes, vote_delay):
-            await bot.say('Changing vote delay to: ' +arg1+' seconds.')
-            vote_delay = (int(arg1))
+async def cmd_vote_delay(ctx, new_vote_delay):
+    max_vd = config_manager.get_config_variable("max_vote_delay")
+    min_vd = config_manager.get_config_variable("min_vote_delay")
+    old_vd = config_manager.get_config_variable("vote_delay")
+    new_vd = int(new_vote_delay)
+
+
+    if old_vd != new_vd:
+        if new_vd <= max_vd and new_vd >= min_vd:
+            temp_mes = await bot.say('Voting to change vote delay to: ' +new_vote_delay+ ' seconds.')
+            if await run_reaction_vote(temp_mes, old_vd):
+                await bot.say('Changing vote delay to: ' +new_vote_delay+ ' seconds.')
+                config_manager.set_config_variable("vote_delay", new_vd)
+            else:
+                await bot.say("Vote failed")
         else:
-            await bot.say("Vote failed")
-      else: await bot.say('Invalid vote delay. Delay must be between '+str(min_vote_delay)+' and '+str(max_vote_delay)+' seconds.')
-    else: await bot.say('New vote delay is the same as current vote delay.')
-    
+            await bot.say('Invalid vote delay. Delay must be between ' +str(min_vd)+ ' and ' +str(max_vd)+ ' seconds.')
+    else:
+        await bot.say('New vote delay is the same as current vote delay.')
 bot.run(token)
