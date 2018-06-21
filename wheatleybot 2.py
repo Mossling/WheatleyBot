@@ -10,8 +10,8 @@ import config_manager
 
 #host config - None changable
 token = "NDQ5NzA5NzEzOTE2MTY2MTQ0.Depjsg.PqAQCSS0ngFNKQvkCsWA3KiAKiE"
-max_vote_delay = 5 # 5 seconds
-min_vote_delay = 300 # 5*60 5 minutes
+max_vote_delay = 300 # 5*60 5 minutes
+min_vote_delay = 5 # 5 seconds
 
 #config - changeable by vote
 prefix = "!"
@@ -128,8 +128,15 @@ async def grp_config(ctx):
 @grp_config.command(pass_context=True, name="vote_delay")
 async def cmd_vote_delay(ctx, arg1):
     global vote_delay
-    if ((arg1) <= "600") and ((arg1) >= "10"):
-        await bot.say('Changing vote delay to: ' +arg1+' seconds.')
-        vote_delay = (int(arg1))
+    if (vote_delay) != (int(arg1)):
+      if ((int(arg1)) <= (max_vote_delay) and (int(arg1)) >= (min_vote_delay)):
+        temp_mes = await bot.say('Voting to change vote delay to: ' +arg1+ ' seconds.')
+        if await run_reaction_vote(temp_mes, vote_delay):
+            await bot.say('Changing vote delay to: ' +arg1+' seconds.')
+            vote_delay = (int(arg1))
+        else:
+            await bot.say("Vote failed")
+      else: await bot.say('Invalid vote delay. Delay must be between '+str(min_vote_delay)+' and '+str(max_vote_delay)+' seconds.')
+    else: await bot.say('New vote delay is the same as current vote delay.')
     
 bot.run(token)
