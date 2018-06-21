@@ -6,6 +6,8 @@ from discord.ext import commands
 import asyncio
 import chalk
 
+import config_manager
+
 #host config - None changable
 token = "NDQ5NzA5NzEzOTE2MTY2MTQ0.Depjsg.PqAQCSS0ngFNKQvkCsWA3KiAKiE"
 max_vote_delay = 5 # 5 seconds
@@ -14,6 +16,8 @@ min_vote_delay = 300 # 5*60 5 minutes
 #config - changeable by vote
 prefix = "!"
 vote_delay = 10
+
+config_manager.save_config()
 
 bot = commands.Bot(command_prefix=prefix)
 
