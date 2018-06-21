@@ -18,16 +18,10 @@ vote_delay = 10
 bot = commands.Bot(command_prefix=prefix)
 
 #Command to show config settings
-@bot.command(pass_context=True)
-async def settings(ctx):
+@bot.command(pass_context=True, name="settings")
+async def cmd_settings(ctx):
     await bot.say('Command prefix is '+prefix+'.')
     await bot.say('Voting timer is '+str(vote_delay)+' seconds.')
-
-
-#print vote_delay to console
-@bot.command(pass_context=True)
-async def printvotedelay(ctx):
-    print(vote_delay)
 
 @bot.event
 async def on_ready():
@@ -38,12 +32,12 @@ async def on_ready():
 #    print("The message's content was: " + message.content)
 
 
-@bot.command(pass_context=True)
-async def ping(ctx):
+@bot.command(pass_context=True, name="ping")
+async def cmd_ping(ctx):
     await bot.say("ponggggg!")
 
-@bot.command(pass_context=True)
-async def echo(ctx, *, arg):
+@bot.command(pass_context=True, name="echo")
+async def cmd_echo(ctx, *, arg):
     await bot.say(arg)
 
 
@@ -68,18 +62,18 @@ async def run_reaction_vote(temp_mes, delay):
         #else: TODO remove any other emoji
     return thumbs_ups > thumbs_downs # returns true if success
 
-@bot.group(pass_context=True)
-async def set(ctx):
+@bot.group(pass_context=True, name="set")
+async def grp_set(ctx):
     if ctx.invoked_subcommand is None:
         await bot.say("Improper use")
 
-@set.group(pass_context=True)
-async def server(ctx):
+@grp_set.group(pass_context=True, name="server")
+async def grp_server(ctx):
     if ctx.invoked_subcommand is None:
         await bot.say("Improper use")
 
-@server.command(pass_context=True)
-async def name(ctx, new_name):
+@grp_server.command(pass_context=True, name="name")
+async def cmd_name(ctx, new_name):
     server = ctx.message.author.server # get target server for name change
 
     if(new_name != server.name):
@@ -94,13 +88,13 @@ async def name(ctx, new_name):
     else:
         await bot.say("Current name and new name are the same")
 
-@set.group(pass_context=True)
-async def channel(ctx):
+@grp_set.group(pass_context=True, name="channel")
+async def grp_channel(ctx):
     if ctx.invoked_subcommand is None:
         await bot.say("Improper use")
 
-@channel.command(pass_context=True)
-async def name(ctx, target_channel_name, new_name):
+@grp_channel.command(pass_context=True, name="name")
+async def cmd_name(ctx, target_channel_name, new_name):
     for channel in (ctx.message.author.server.channels):
         if channel.name == target_channel_name:
             target_channel = channel
@@ -121,14 +115,14 @@ async def name(ctx, target_channel_name, new_name):
     else:
         await bot.say("Current name and new name are the same")
 
-@set.group(pass_context=True)
-async def config(ctx):
+@grp_set.group(pass_context=True, name="config")
+async def grp_config(ctx):
     if ctx.invoked_subcommand is None:
         await bot.say("Improper use")
 
 #Command for setting the vote delay
-@config.command(pass_context=True, name="vote_delay")
-async def _vote_delay(ctx, arg1):
+@grp_config.command(pass_context=True, name="vote_delay")
+async def cmd_vote_delay(ctx, arg1):
     global vote_delay
     if ((arg1) <= "600") and ((arg1) >= "10"):
         await bot.say('Changing vote delay to: ' +arg1+' seconds.')
