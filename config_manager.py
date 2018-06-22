@@ -21,7 +21,7 @@ def save_config(config_file=default_config_file):
         # <key>=<value>newline
         cfg_text += key
         cfg_text += "="
-        cfg_text += value
+        cfg_text += str(value)
         cfg_text += "\n"
     #Open config file
     with open(config_file, "w") as f:

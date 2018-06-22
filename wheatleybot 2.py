@@ -8,14 +8,6 @@ import chalk
 
 import config_manager
 
-#host config - None changable
-token = "NDQ5NzA5NzEzOTE2MTY2MTQ0.Depjsg.PqAQCSS0ngFNKQvkCsWA3KiAKiE"
-max_vote_delay = 300 # 5*60 5 minutes
-min_vote_delay = 5 # 5 seconds
-
-#config - changeable by vote
-vote_delay = 10
-
 config_manager.load_config()
 
 p = config_manager.get_config_variable("prefix")
@@ -33,6 +25,10 @@ async def cmd_settings(ctx):
 async def on_ready():
     print("Ready when you are!")
 
+@bot.command(pass_context=True, name="shutdown")
+async def cmd_shutdown(ctx):
+    config_manager.save_config()
+    await bot.close()
 #@bot.event
 #async def on_message(message):
 #    print("The message's content was: " + message.content)
@@ -151,4 +147,5 @@ async def cmd_vote_delay(ctx, new_vote_delay):
             await bot.say('Invalid vote delay. Delay must be between ' +str(min_vd)+ ' and ' +str(max_vd)+ ' seconds.')
     else:
         await bot.say('New vote delay is the same as current vote delay.')
-bot.run(token)
+t = config_manager.get_config_variable("token")
+bot.run(t)
