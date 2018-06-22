@@ -5,19 +5,27 @@ import json
 #Right now the bots config is universal. We could make multiple bot configs per server.
 
 default_config_file = "default.cfg"
-
+value_parser = {}
+value_parser["prefix"] = str
+value_parser["min_vote_delay"] = int
+value_parser["max_vote_delay"] = int
+value_parser["vote_delay"] = int
+value_parser["token"] = str
 #Global config dict
 config = {}
-config["min_vote_delay"] = 5
-config["max_vote_delay"] = 300
-config["vote_delay"] = 10
-config["prefix"] = "!"
 
 def save_config(config_file=default_config_file):
+    cfg_text = ""
 
+    for key, value in config.items():
+        # <key>=<value>newline
+        cfg_text += key
+        cfg_text += "="
+        cfg_text += value
+        cfg_text += "\n"
     #Open config file
     with open(config_file, "w") as f:
-        json.dump(config, f)
+        f.write(cfg_text)
 
 	#Default config file could be default.cfg.
 	#We could also have default config files for servers based on the servers name.
@@ -28,13 +36,19 @@ def load_config(config_file=default_config_file):
     with open(config_file, "r") as f:
         if f==None:
             return False
-        config = json.load(f)
-        #TODO: add error checking for invalid or incomplete config files
+        for line in f:
+            #Ignore comments
+            if line[0] != "#":
+                line = line[:-1]
+                key, value = line.split("=")
+                value = value_parser[key](value)
+                set_config_variable(key, value)
+        #TODO: add error checking for invalid key value pairs and incomplete config files
+        print(json.dumps(config))
         return True
 
 def set_config_variable(key, value):
     config[key] = value
-    save_config()
 
 def get_config_variable(key):
     return config[key]
